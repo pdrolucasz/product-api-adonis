@@ -22,4 +22,7 @@ Route.get('/', () => {
 
 Route.group(() => {
   Route.resource('/clients', 'ClientController').apiOnly()
+  Route.resource('/categories', 'CategoryController').apiOnly()
+  Route.resource('/products', 'ProductController').apiOnly()
+  Route.resource('/sales', 'SaleController').apiOnly()
 })

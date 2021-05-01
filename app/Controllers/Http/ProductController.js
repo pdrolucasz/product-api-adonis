@@ -4,6 +4,8 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Product = use('App/Models/Product')
+
 /**
  * Resourceful controller for interacting with products
  */
@@ -17,19 +19,10 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-  }
+  async index () {
+    const products = await Product.query().with('category').fetch()
 
-  /**
-   * Render a form to be used for creating a new product.
-   * GET products/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    return products
   }
 
   /**
@@ -40,7 +33,12 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request }) {
+    const data = request.only(['name', 'category_id', 'value'])
+
+    const product = await Product.create({ ...data })
+
+    return product
   }
 
   /**
@@ -52,19 +50,10 @@ class ProductController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show ({ params }) {
+    const product = await Product.query().where('id', params.id).with('category').fetch()
 
-  /**
-   * Render a form to update an existing product.
-   * GET products/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    return product
   }
 
   /**
@@ -75,7 +64,18 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params, request }) {
+    const { name, category_id, value } = request.only(['name', 'category_id', 'value'])
+
+    const product = await Product.findOrFail(params.id)
+
+    product.name = name
+    product.category_id = category_id
+    product.value = value
+
+    await product.save()
+
+    return product
   }
 
   /**
@@ -86,7 +86,10 @@ class ProductController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params }) {
+    const product = await Product.findOrFail(params.id)
+
+    await product.delete()
   }
 }
 

@@ -4,6 +4,8 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Sale = use('App/Models/Sale')
+
 /**
  * Resourceful controller for interacting with sales
  */
@@ -17,19 +19,10 @@ class SaleController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-  }
+  async index () {
+    const sales = await Sale.query().with('product').with('client').fetch()
 
-  /**
-   * Render a form to be used for creating a new sale.
-   * GET sales/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async create ({ request, response, view }) {
+    return sales
   }
 
   /**
@@ -40,7 +33,12 @@ class SaleController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ request }) {
+    const data = request.only(['product_id', 'client_id'])
+
+    const sale = await Sale.create({ ...data })
+
+    return sale
   }
 
   /**
@@ -52,19 +50,10 @@ class SaleController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show ({ params }) {
+    const product = await Sale.query().where('id', params.id).with('product').with('client').fetch()
 
-  /**
-   * Render a form to update an existing sale.
-   * GET sales/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
+    return product
   }
 
   /**
@@ -75,7 +64,17 @@ class SaleController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
+  async update ({ params, request }) {
+    const { product_id, client_id } = request.only(['product_id', 'client_id'])
+
+    const sale = await Sale.findOrFail(params.id)
+
+    sale.product_id = product_id
+    sale.client_id = client_id
+
+    await sale.save()
+
+    return sale
   }
 
   /**
@@ -86,7 +85,10 @@ class SaleController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params }) {
+    const sale = await Sale.findOrFail(params.id)
+
+    await sale.delete()
   }
 }
 

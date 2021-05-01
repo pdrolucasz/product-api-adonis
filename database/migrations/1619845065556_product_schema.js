@@ -18,6 +18,7 @@ class ProductSchema extends Schema {
         .onUpdate("CASCADE")
         .onDelete("CASCADE")
       table.string('name', 160).notNullable()
+      table.float('value', 5, 2).notNullable()
       table.timestamps()
     })
   }

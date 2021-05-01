@@ -21,7 +21,6 @@ class ClientController {
    */
   async index () {
     const clients = await Client.all()
-    console.log(clients)
 
     return clients
   }
