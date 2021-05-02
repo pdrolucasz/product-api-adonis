@@ -5,6 +5,7 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Sale = use('App/Models/Sale')
+const Product = use('App/Models/Product')
 
 /**
  * Resourceful controller for interacting with sales
@@ -34,7 +35,15 @@ class SaleController {
    * @param {Response} ctx.response
    */
   async store ({ request }) {
-    const data = request.only(['product_id', 'client_id'])
+    const { product_id, client_id } = request.only(['product_id', 'client_id'])
+
+    const { category_id } = await Product.findOrFail(product_id)
+
+    const data = {
+      product_id,
+      client_id,
+      category_product_id: category_id
+    }
 
     const sale = await Sale.create({ ...data })
 
@@ -67,10 +76,13 @@ class SaleController {
   async update ({ params, request }) {
     const { product_id, client_id } = request.only(['product_id', 'client_id'])
 
+    const { category_id } = await Product.findOrFail(product_id)
+
     const sale = await Sale.findOrFail(params.id)
 
     sale.product_id = product_id
     sale.client_id = client_id
+    sale.category_product_id = category_id
 
     await sale.save()
 
