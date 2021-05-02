@@ -16,6 +16,8 @@
 ## Migrations
 
 <pre>
+# Set .env variables
+
 adonis migration:run
 </pre>
 
@@ -33,6 +35,8 @@ git clone https://github.com/pdrolucasz/product-api-adonis.git
 
 # Install dependencies
 yarn or npm install
+
+# Set .env variables
 
 # Initiate the application
 adonis serve --dev
