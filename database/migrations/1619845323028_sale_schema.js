@@ -25,6 +25,14 @@ class SaleSchema extends Schema {
         .inTable('clients')
         .onUpdate("CASCADE")
         .onDelete("CASCADE")
+      table
+        .integer('category_product_id')
+        .unsigned()
+        .notNullable()
+        .references('category_id')
+        .inTable('products')
+        .onUpdate("CASCADE")
+        .onDelete("CASCADE")
       table.timestamps()
     })
   }
