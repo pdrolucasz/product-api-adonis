@@ -88,7 +88,7 @@ class BalanceController {
     return {
       categoryName,
       mostSold,
-      average: Number((dividend / divider).toFixed(4)),
+      average: Number((dividend / divider).toFixed(2)),
       sales: sales_category
     }
   }
