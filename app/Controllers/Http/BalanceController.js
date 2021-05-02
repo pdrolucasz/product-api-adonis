@@ -1,6 +1,6 @@
 'use strict'
 
-const Product = use('App/Models/Product')
+const Category = use('App/Models/Category')
 const Sale = use('App/Models/Sale')
 
 class BalanceController {
@@ -13,6 +13,11 @@ class BalanceController {
       .with('product')
       .with('client')
       .fetch()
+
+    // Nome da categoria
+
+    const category = await Category.findOrFail(params.id)
+    const categoryName = category['$attributes'].name
 
     // Separando todos os ids de produtos
 
@@ -62,7 +67,7 @@ class BalanceController {
       if(product['$relations'].product['$attributes'].id === auxMostSold[0]) {
         mostSold = {
           ...product['$relations'].product['$attributes'],
-          mostSold: product['$relations'].product['$attributes'].value * quantity
+          mostSoldTotal: product['$relations'].product['$attributes'].value * quantity
         }
       }
     })
@@ -81,6 +86,7 @@ class BalanceController {
     })
 
     return {
+      categoryName,
       mostSold,
       average: Number((dividend / divider).toFixed(4)),
       sales: sales_category
