@@ -26,3 +26,5 @@ Route.group(() => {
   Route.resource('/products', 'ProductController').apiOnly()
   Route.resource('/sales', 'SaleController').apiOnly()
 })
+
+Route.get('/balances/:id', 'BalanceController.show')
